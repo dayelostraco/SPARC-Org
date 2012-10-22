@@ -1,0 +1,82 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <context:component-scan base-package="sparc.products.org"/>
+
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix">
+            <value>/WEB-INF/jsp/</value>
+        </property>
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+
+    <!-- Maps requests to @Controllers based on @RequestMapping("path") annotation values If no annotation-based path mapping is found, Spring MVC proceeds to the next HandlerMapping (order=2 below). -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <property name="order" value="0"/>
+    </bean>
+
+    <!-- Enables annotated POJO @Controllers -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="order" value="1"/>
+        <property name="messageConverters">
+            <util:list id="beanList">
+                <ref bean="jsonHttpMessageConverter"/>
+            </util:list>
+        </property>
+    </bean>
+
+    <!-- Integrates JSON -->
+    <bean id="jsonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+        <property name="supportedMediaTypes" value="application/json"/>
+    </bean>
+
+    <!-- Enables plain Controllers -->
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+
+    <!-- GSON Converters -->
+    <bean class="com.google.gson.Gson" name="gsonConverter"/>
+
+    <!-- Hibernate 4 Beans -->
+    <!--<bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">-->
+        <!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
+        <!--<property name="url" value="jdbc:mysql://sparcpitch.czgcp907ixx2.us-east-1.rds.amazonaws.com:3306/MC_HACKATHON"/>-->
+        <!--<property name="username" value="admin"/>-->
+        <!--<property name="password" value="googlerules"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="entityManagerFactoryBean"-->
+          <!--class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">-->
+        <!--<property name="dataSource" ref="dataSource"/>-->
+        <!--<property name="jpaVendorAdapter">-->
+            <!--<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">-->
+                <!--<property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect"/>-->
+                <!--<property name="showSql" value="true"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+        <!--<property name="jpaPropertyMap">-->
+            <!--<map>-->
+                <!--<entry key="hibernate.max_fetch_depth" value="10"/>-->
+                <!--<entry key="hibernate.show_sql" value="true"/>-->
+            <!--</map>-->
+        <!--</property>-->
+        <!--<property name="persistenceUnitName" value="mcHackathonPersistence"/>-->
+    <!--</bean>-->
+
+    <!--<tx:annotation-driven/>-->
+
+    <!--<bean id="transactionManager"-->
+          <!--class="org.springframework.orm.jpa.JpaTransactionManager">-->
+        <!--<property name="entityManagerFactory" ref="entityManagerFactoryBean"/>-->
+    <!--</bean>-->
+
+    <!--<tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>-->
+
+</beans>
