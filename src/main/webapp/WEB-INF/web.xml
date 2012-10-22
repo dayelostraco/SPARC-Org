@@ -5,7 +5,7 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
 
-    <display-name>SPARC Pitch</display-name>
+    <display-name>SPARC Org</display-name>
 
     <servlet>
         <servlet-name>mvc-dispatcher</servlet-name>
