@@ -4,17 +4,26 @@
        xmlns:neo4j="http://www.springframework.org/schema/data/neo4j"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/data/neo4j http://www.springframework.org/schema/data/neo4j/spring-neo4j-2.0.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
-       ">
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
     <context:annotation-config/>
     <context:spring-configured/>
+    <context:annotation-config/>
     <context:component-scan base-package="sparc.products"/>
+
+    <!-- Neo4j Database -->
+    <neo4j:config storeDirectory="data/sandbox.db"/>
+    <neo4j:repositories base-package="sparc.products.org.repository"/>
+
+    <!-- Transaction Management -->
+    <tx:annotation-driven mode="proxy"/>
 
     <!-- Maps Resources to URL -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
@@ -52,11 +61,5 @@
 
     <!-- Enables plain Controllers -->
     <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
-
-    <!-- GSON Converters -->
-    <bean class="com.google.gson.Gson" name="gsonConverter"/>
-
-    <!-- Neo4j Database -->
-    <neo4j:config storeDirectory="data/sandbox.db"/>
 
 </beans>

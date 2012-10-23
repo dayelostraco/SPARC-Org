@@ -1,5 +1,8 @@
 package sparc.products.org.model;
 
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
 import java.util.Set;
 
 /**
@@ -7,8 +10,10 @@ import java.util.Set;
  * Date: 10/22/12
  * Time: 4:23 PM
  */
+@NodeEntity
 public class Organization {
 
+    @GraphId
     private String id;
     private String organizationName;
     private Set<Project> projects;
