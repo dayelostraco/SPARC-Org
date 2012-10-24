@@ -465,7 +465,7 @@
                     // A fallback to window.onload, that will always work
                     window.addEventListener("load", jQuery.ready, false);
 
-                    // If IE event model is used
+                    // If IE event graph is used
                 } else if (document.attachEvent) {
                     // ensure firing before onload,
                     // maybe late but safe also for iframes
@@ -1295,7 +1295,7 @@
 
         div.innerHTML = "";
 
-        // Figure out if the W3C box model works as expected
+        // Figure out if the W3C box graph works as expected
         div.style.width = div.style.paddingLeft = "1px";
 
         body = document.getElementsByTagName("body")[ 0 ];

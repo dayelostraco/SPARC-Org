@@ -1,7 +1,10 @@
-package sparc.products.org.model;
+package sparc.products.org.graph.node;
 
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import java.util.Set;
 
@@ -16,8 +19,18 @@ public class Organization {
     @GraphId
     private Long id;
     private String organizationName;
-    private Set<Project> projects;
+
+    @Fetch
+    @RelatedTo(type = "ROLE_IN", direction = Direction.OUTGOING)
     private Set<Employee> employees;
+
+    public Organization() {
+
+    }
+
+    public Organization(String organizationName) {
+        this.organizationName = organizationName;
+    }
 
     public Long getId() {
         return id;
@@ -33,14 +46,6 @@ public class Organization {
 
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
-    }
-
-    public Set<Project> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(Set<Project> projects) {
-        this.projects = projects;
     }
 
     public Set<Employee> getEmployees() {
