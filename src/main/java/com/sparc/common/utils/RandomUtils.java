@@ -20,6 +20,6 @@ public class RandomUtils {
     }
 
     public static String getRandomString(int minLength, int maxLength){
-        return RandomStringUtils.randomAlphanumeric(getRandomIntBetween(minLength, maxLength));
+        return RandomStringUtils.randomAlphabetic(getRandomIntBetween(minLength, maxLength));
     }
 }

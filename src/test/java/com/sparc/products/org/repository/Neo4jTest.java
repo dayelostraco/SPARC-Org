@@ -73,10 +73,40 @@ public class Neo4jTest {
                 retrievedOrganization.getEmployees().contains(retrievedEmployee));
     }
 
+    @Test
+    @Transactional
+    public void testCompanyWithMultipleEmployees() throws Exception {
+
+        //Create Random Nodes
+        Organization organization = createRandomOrganization();
+        Set<Employee> employees = createRandomEmployees(RandomUtils.getRandomIntBetween(2,20));
+
+        //Create Random relationships for each random Employee and test
+        for(Employee employee : employees){
+
+            //Create Random OrganizationRoles
+            Set<OrganizationRole> organizationRoles =
+                    createRandomOrganizationRoles(organization, employee, RandomUtils.getRandomIntBetween(1, 10));
+
+            //Retrieve latest version of Employee and test
+            Employee retrievedEmployee = template.findOne(employee.getId(), Employee.class);
+            assertTrue("retrieved employee has all their OrganizationRoles persisted",
+                    retrievedEmployee.getOrganizationRoles().containsAll(organizationRoles));
+
+            //Retrieve latest version of Organization and test
+            Organization retrievedOrganization = template.findOne(organization.getId(), Organization.class);
+            assertTrue("retrieved Organization contains all OrganizationRoles",
+                    retrievedOrganization.getOrganizationRoles().containsAll(organizationRoles));
+            assertTrue("retrieved Organization contains the current Employee", retrievedOrganization.getEmployees().contains(employee));
+        }
+    }
+
+    @Transactional
     private Organization createRandomOrganization(){
         return template.save(new Organization(RandomUtils.getRandomString(4, 25)));
     }
 
+    @Transactional
     private Set<Organization> createRandomOrganizations(int numberRequested){
 
         Set<Organization> randomOrganizations = new HashSet<Organization>();
@@ -88,6 +118,7 @@ public class Neo4jTest {
         return randomOrganizations;
     }
 
+    @Transactional
     private Employee createRandomEmployee(){
         String firstName = RandomUtils.getRandomString(3, 5);
         String middleName = RandomUtils.getRandomString(3, 15);
@@ -97,6 +128,7 @@ public class Neo4jTest {
         return template.save(new Employee(firstName, middleName, lastName, emailAddress));
     }
 
+    @Transactional
     private Set<Employee> createRandomEmployees(int numberRequested){
 
         Set<Employee> randomEmployees = new HashSet<Employee>();
@@ -108,10 +140,12 @@ public class Neo4jTest {
         return randomEmployees;
     }
 
+    @Transactional
     private OrganizationRole createRandomOrganizationRole(Organization organization, Employee employee){
-        return template.createRelationshipBetween(organization, employee, OrganizationRole.class, "ROLE_IN", true);
+        return template.save(new OrganizationRole(organization, employee, RandomUtils.getRandomString(3, 25)));
     }
 
+    @Transactional
     private Set<OrganizationRole> createRandomOrganizationRoles(Organization organization, Employee employee, int numberRequested){
 
         Set<OrganizationRole> organizationRoles = new HashSet<OrganizationRole>();

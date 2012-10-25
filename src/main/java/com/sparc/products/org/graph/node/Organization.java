@@ -1,10 +1,8 @@
 package com.sparc.products.org.graph.node;
 
+import com.sparc.products.org.graph.relationship.OrganizationRole;
 import org.neo4j.graphdb.Direction;
-import org.springframework.data.neo4j.annotation.Fetch;
-import org.springframework.data.neo4j.annotation.GraphId;
-import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
+import org.springframework.data.neo4j.annotation.*;
 
 import java.util.Set;
 
@@ -23,6 +21,10 @@ public class Organization {
     @Fetch
     @RelatedTo(type = "ROLE_IN", direction = Direction.OUTGOING)
     private Set<Employee> employees;
+
+    @Fetch
+    @RelatedToVia(type = "ROLE_IN", direction = Direction.OUTGOING)
+    private Set<OrganizationRole> organizationRoles;
 
     public Organization() {
 
@@ -54,6 +56,14 @@ public class Organization {
 
     public void setEmployees(Set<Employee> employees) {
         this.employees = employees;
+    }
+
+    public Set<OrganizationRole> getOrganizationRoles() {
+        return organizationRoles;
+    }
+
+    public void setOrganizationRoles(Set<OrganizationRole> organizationRoles) {
+        this.organizationRoles = organizationRoles;
     }
 
     @Override
