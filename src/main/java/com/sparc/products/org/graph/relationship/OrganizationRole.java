@@ -1,8 +1,8 @@
-package sparc.products.org.graph.relationship;
+package com.sparc.products.org.graph.relationship;
 
 import org.springframework.data.neo4j.annotation.*;
-import sparc.products.org.graph.node.Employee;
-import sparc.products.org.graph.node.Organization;
+import com.sparc.products.org.graph.node.Employee;
+import com.sparc.products.org.graph.node.Organization;
 
 /**
  * User: Dayel Ostraco

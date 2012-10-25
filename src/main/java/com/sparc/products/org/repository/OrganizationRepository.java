@@ -1,4 +1,4 @@
-package sparc.products.org.repository;
+package com.sparc.products.org.repository;
 
 /**
  * User: Dayel Ostraco

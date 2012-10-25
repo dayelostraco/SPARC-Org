@@ -12,10 +12,10 @@
 
     <context:annotation-config/>
     <context:spring-configured/>
-    <context:component-scan base-package="sparc.products"/>
+    <context:component-scan base-package="com.sparc.products"/>
 
     <neo4j:config graphDatabaseService="graphDatabaseService"/>
-    <neo4j:repositories base-package="sparc.products.org.neo4j"/>
+    <neo4j:repositories base-package="com.sparc.products.org.neo4j"/>
 
     <bean id="graphDatabaseService" class="org.neo4j.test.ImpermanentGraphDatabase" destroy-method="shutdown"/>
 

@@ -1,6 +1,5 @@
-package sparc.products.org.repository;
+package com.sparc.products.org.repository;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +7,10 @@ import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import sparc.products.org.graph.node.Employee;
-import sparc.products.org.graph.node.Organization;
-import sparc.products.org.graph.relationship.OrganizationRole;
+import com.sparc.common.utils.RandomUtils;
+import com.sparc.products.org.graph.node.Employee;
+import com.sparc.products.org.graph.node.Organization;
+import com.sparc.products.org.graph.relationship.OrganizationRole;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -74,7 +74,7 @@ public class Neo4jTest {
     }
 
     private Organization createRandomOrganization(){
-        return template.save(new Organization(RandomStringUtils.randomAlphanumeric(20)));
+        return template.save(new Organization(RandomUtils.getRandomString(4, 25)));
     }
 
     private Set<Organization> createRandomOrganizations(int numberRequested){
@@ -89,10 +89,10 @@ public class Neo4jTest {
     }
 
     private Employee createRandomEmployee(){
-        String firstName = RandomStringUtils.randomAlphanumeric(10);
-        String middleName = RandomStringUtils.randomAlphanumeric(10);
-        String lastName = RandomStringUtils.randomAlphanumeric(10);
-        String emailAddress = RandomStringUtils.randomAlphanumeric(25);
+        String firstName = RandomUtils.getRandomString(3, 5);
+        String middleName = RandomUtils.getRandomString(3, 15);
+        String lastName = RandomUtils.getRandomString(3, 20);
+        String emailAddress = RandomUtils.getRandomString(15, 30);
 
         return template.save(new Employee(firstName, middleName, lastName, emailAddress));
     }

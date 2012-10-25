@@ -1,4 +1,4 @@
-package sparc.products.org.graph.node;
+package com.sparc.products.org.graph.node;
 
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;

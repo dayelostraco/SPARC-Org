@@ -16,11 +16,11 @@
     <context:annotation-config/>
     <context:spring-configured/>
     <context:annotation-config/>
-    <context:component-scan base-package="sparc.products"/>
+    <context:component-scan base-package="com.sparc.products"/>
 
     <!-- Neo4j Database -->
     <neo4j:config storeDirectory="data/sandbox.db"/>
-    <neo4j:repositories base-package="sparc.products.org.repository"/>
+    <neo4j:repositories base-package="com.sparc.products.org.repository"/>
 
     <!-- Transaction Management -->
     <tx:annotation-driven mode="proxy"/>

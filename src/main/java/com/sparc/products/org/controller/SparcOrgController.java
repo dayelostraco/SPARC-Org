@@ -1,4 +1,4 @@
-package sparc.products.org.controller;
+package com.sparc.products.org.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
