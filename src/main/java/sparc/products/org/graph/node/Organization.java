@@ -55,4 +55,23 @@ public class Organization {
     public void setEmployees(Set<Employee> employees) {
         this.employees = employees;
     }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if(o instanceof Organization){
+            Organization organization = (Organization) o;
+            return id.equals(organization.getId());
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if(id==null){
+            return super.hashCode();
+        }
+        return id.intValue();
+    }
 }

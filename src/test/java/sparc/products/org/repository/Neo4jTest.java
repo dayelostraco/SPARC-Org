@@ -1,6 +1,6 @@
 package sparc.products.org.repository;
 
-import org.junit.BeforeClass;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -25,82 +24,102 @@ import static org.junit.Assert.assertTrue;
  * Time: 10:19 PM
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/META-INF/sparc-org-text-context.xml"})
+@ContextConfiguration({"/META-INF/sparc-org-test-context.xml"})
 public class Neo4jTest {
 
     @Autowired
     Neo4jTemplate template;
 
-    private static Set<Organization> organizations;
-    private static Set<Employee> employees;
-    private static Set<OrganizationRole> organizationRoles;
-
-    @BeforeClass
-    public static void instantiateCollections(){
-        organizations = new HashSet<Organization>();
-        employees = new HashSet<Employee>();
-        organizationRoles = new HashSet<OrganizationRole>();
+    @Test
+    @Transactional
+    public void testCreateOrganization() throws Exception {
+        Organization organization = createRandomOrganization();
+        Organization organizationRetrieved = template.findOne(organization.getId(), Organization.class);
+        assertEquals("retrieved organization matches persisted one", organization.getId(), organizationRetrieved.getId());
+        assertEquals("retrieved organization title matches", organization.getOrganizationName(), organizationRetrieved.getOrganizationName());
     }
 
     @Test
     @Transactional
-    public void testNodeRelationshipModel() throws Exception {
-        testCreateOrganization();
-        testCreateEmployee();
-        testCreateRichRelationship();
-        testMultipleRelationships();
-    }
-
-    @Transactional
-    public void testCreateOrganization() throws Exception {
-        Organization organization = template.save(new Organization("SPARC LLC"));
-        Organization organizationRetrieved = template.findOne(organization.getId(), Organization.class);
-        assertEquals("retrieved organization matches persisted one", organization.getId(), organizationRetrieved.getId());
-        assertEquals("retrieved organization title matches", organization.getOrganizationName(), organizationRetrieved.getOrganizationName());
-
-        organizations.add(organizationRetrieved);
-    }
-
-    @Transactional
     public void testCreateEmployee() throws Exception {
-        Employee employee = template.save(new Employee("Dayel", "Blake", "Ostraco", "dayel.ostraco@sparcedge.com"));
+        Employee employee = createRandomEmployee();
         Employee employeeRetrieved = template.findOne(employee.getId(), Employee.class);
         assertEquals("retrieved employee matches persisted one", employee.getId(), employeeRetrieved.getId());
         assertEquals("retrieved employee name matches", employee.getFirstName(), employeeRetrieved.getFirstName());
-
-        employees.add(employeeRetrieved);
     }
 
+    @Test
     @Transactional
     public void testCreateRichRelationship() throws Exception {
-        Organization organization = (Organization) organizations.toArray()[0];
-        Employee employee = (Employee) employees.toArray()[0];
 
-        OrganizationRole organizationRole = template.save(new OrganizationRole(organization, employee, "Tech Lead"));
-        assertNotNull("retrieved role matches persisted one", organizationRole.getId());
+        //Create Nodes and Relationships
+        Organization organization = createRandomOrganization();
+        Employee employee = createRandomEmployee();
+        OrganizationRole organizationRole = createRandomOrganizationRole(organization, employee);
 
-        organizationRoles.add(organizationRole);
-
+        //Fetch eagerly loaded Employee and Organization Nodes
         Employee retrievedEmployee = template.findOne(employee.getId(), Employee.class);
         Organization retrievedOrganization = template.findOne(organization.getId(), Organization.class);
-        OrganizationRole retrievedRole = (OrganizationRole) retrievedEmployee.getOrganizationRoles().toArray()[0];
-        assertEquals("retrieved employee has the persisted relationship to organization", organizationRole.getRole(), retrievedRole.getRole());
-        assertEquals("retrieved organization fetched all employees with organization", retrievedOrganization.getEmployees().size(), employees.size());
+
+        //Tests OrganizationRole was persisted
+        assertTrue("retrieved employee has the related OrganizationRole attached", retrievedEmployee.getOrganizationRoles().contains(organizationRole));
+
+        //Tests Employee to Organization Relationship
+        assertTrue("retrieved employee has the related Organization attached",
+                retrievedEmployee.getOrganization().contains(retrievedOrganization));
+
+        //Tests Organization to Employee Relationship
+        assertTrue("retrieved organization has the related Employee attached",
+                retrievedOrganization.getEmployees().contains(retrievedEmployee));
     }
 
-    @Transactional
-    public void testMultipleRelationships() throws Exception {
-        Organization organization = (Organization) organizations.toArray()[0];
-        Employee employee = (Employee) employees.toArray()[0];
+    private Organization createRandomOrganization(){
+        return template.save(new Organization(RandomStringUtils.randomAlphanumeric(20)));
+    }
 
-        OrganizationRole organizationRole2 = template.save(new OrganizationRole(organization, employee, "Director"));
-        assertTrue("persisted second organization role", organizationRole2.getId()!=0);
-        organizationRoles.add(organizationRole2);
-        OrganizationRole organizationRole3 = template.save(new OrganizationRole(organization, employee, "Senior Engineer"));
-        assertTrue("persisted third organization role", organizationRole3.getId()!=0);
-        organizationRoles.add(organizationRole3);
+    private Set<Organization> createRandomOrganizations(int numberRequested){
 
-        Employee retrievedEmployee = template.findOne(employee.getId(), Employee.class);
-        assertEquals("retrieved employee has all relationships mapped", retrievedEmployee.getOrganizationRoles().size(), organizationRoles.size());
+        Set<Organization> randomOrganizations = new HashSet<Organization>();
+
+        for(int i = 0 ; i<numberRequested ; i++){
+            randomOrganizations.add(createRandomOrganization());
+        }
+
+        return randomOrganizations;
+    }
+
+    private Employee createRandomEmployee(){
+        String firstName = RandomStringUtils.randomAlphanumeric(10);
+        String middleName = RandomStringUtils.randomAlphanumeric(10);
+        String lastName = RandomStringUtils.randomAlphanumeric(10);
+        String emailAddress = RandomStringUtils.randomAlphanumeric(25);
+
+        return template.save(new Employee(firstName, middleName, lastName, emailAddress));
+    }
+
+    private Set<Employee> createRandomEmployees(int numberRequested){
+
+        Set<Employee> randomEmployees = new HashSet<Employee>();
+
+        for(int i = 0 ; i<numberRequested ; i++){
+            randomEmployees.add(createRandomEmployee());
+        }
+
+        return randomEmployees;
+    }
+
+    private OrganizationRole createRandomOrganizationRole(Organization organization, Employee employee){
+        return template.createRelationshipBetween(organization, employee, OrganizationRole.class, "ROLE_IN", true);
+    }
+
+    private Set<OrganizationRole> createRandomOrganizationRoles(Organization organization, Employee employee, int numberRequested){
+
+        Set<OrganizationRole> organizationRoles = new HashSet<OrganizationRole>();
+
+        for(int i = 0 ; i<numberRequested ; i++){
+            organizationRoles.add(createRandomOrganizationRole(organization, employee));
+        }
+
+        return organizationRoles;
     }
 }

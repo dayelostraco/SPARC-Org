@@ -66,4 +66,23 @@ public class OrganizationRole {
     public void setEmployee(Employee employee) {
         this.employee = employee;
     }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if(o instanceof OrganizationRole){
+            OrganizationRole organizationRole = (OrganizationRole) o;
+            return id.equals(organizationRole.getId());
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if(id==null){
+            return super.hashCode();
+        }
+        return id.intValue();
+    }
 }

@@ -24,7 +24,7 @@ public class Employee {
     private String email;
 
     @Fetch
-    @RelatedTo(type = "ROLE_IN")
+    @RelatedTo(type = "ROLE_IN", direction = Direction.INCOMING)
     private Set<Organization> organizations;
 
     @Fetch
@@ -108,5 +108,24 @@ public class Employee {
         this.organizationRoles.add(organizationRole);
 
         return organizationRole;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if(o instanceof Employee){
+            Employee employee = (Employee) o;
+            return id.equals(employee.getId());
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if(id==null){
+            return super.hashCode();
+        }
+        return id.intValue();
     }
 }
